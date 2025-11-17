@@ -2,7 +2,7 @@ from collections import defaultdict
 from decimal import ROUND_HALF_UP, Decimal
 from typing import Dict, Optional
 
-from models import POSLine, PurchaseInvoice, SalesInvoice
+from .models import POSLine, PurchaseInvoice, SalesInvoice
 
 Q2 = Decimal("0.01")
 Q4 = Decimal("0.0001")

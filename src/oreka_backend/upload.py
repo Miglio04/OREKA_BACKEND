@@ -106,10 +106,12 @@ class FileProcessor:
             for page_num in range(len(doc)):
                 page = doc.load_page(page_num)
                 text = page.get_text()
-                extracted_data["pages"].append({
-                    "page_number": page_num + 1,
-                    "text": text,
-                })
+                extracted_data["pages"].append(
+                    {
+                        "page_number": page_num + 1,
+                        "text": text,
+                    }
+                )
                 extracted_data["text_content"] += text + "\n"
 
             # Extract basic invoice information
@@ -253,22 +255,24 @@ class FileProcessor:
         if pos_lines:
             kpi_results = kpi_pos_only(pos_lines)
             # Convert Decimal values to float for JSON serialization
-            summary.update({
-                "revenue_total": float(kpi_results.get("revenue_total", 0)),
-                "revenue_by_area": {
-                    k: float(v)
-                    for k, v in kpi_results.get("revenue_by_area", {}).items()
-                },
-                "revenue_by_payment": {
-                    k: float(v)
-                    for k, v in kpi_results.get("revenue_by_payment", {}).items()
-                },
-                "receipt_count": kpi_results.get("receipt_count", 0),
-                "average_receipt": float(kpi_results.get("average_receipt", 0)),
-                "discount_rate": float(kpi_results["discount_rate"])
-                if kpi_results.get("discount_rate") is not None
-                else None,
-            })
+            summary.update(
+                {
+                    "revenue_total": float(kpi_results.get("revenue_total", 0)),
+                    "revenue_by_area": {
+                        k: float(v)
+                        for k, v in kpi_results.get("revenue_by_area", {}).items()
+                    },
+                    "revenue_by_payment": {
+                        k: float(v)
+                        for k, v in kpi_results.get("revenue_by_payment", {}).items()
+                    },
+                    "receipt_count": kpi_results.get("receipt_count", 0),
+                    "average_receipt": float(kpi_results.get("average_receipt", 0)),
+                    "discount_rate": float(kpi_results["discount_rate"])
+                    if kpi_results.get("discount_rate") is not None
+                    else None,
+                }
+            )
 
         summary["file_types"] = {"csv": csv_count, "pdf": pdf_count}
 
