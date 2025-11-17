@@ -46,6 +46,7 @@ PROMPT = """Interprete the following text extracted from a pdf invoice and retur
             The text is the following: {}
         """
 
+
 # Function to extract text from PDF bytes
 def extract_text_from_pdf(file_bytes: bytes) -> str:
     if not isinstance(file_bytes, (bytes, bytearray)):
@@ -53,12 +54,13 @@ def extract_text_from_pdf(file_bytes: bytes) -> str:
 
     stream = io.BytesIO(file_bytes)
     reader = pypdf.PdfReader(stream)
-    text = ''
+    text = ""
     for page in reader.pages:
         page_text = page.extract_text()
         if page_text:
-            text += page_text + '\n'
+            text += page_text + "\n"
     return text
+
 
 # Function to process PDF text with Mistral API
 def process_pdf_text(pdf_stream: str) -> str:
@@ -68,25 +70,29 @@ def process_pdf_text(pdf_stream: str) -> str:
         for i in range(4):
             try:
                 res = mistral.chat.complete(
-                    model="mistral-small-latest", 
-                    messages=[{
-                        "content": PROMPT.format(pdf_stream),
-                        "role": "user",
-                    }], 
-                    stream=False)
+                    model="mistral-small-latest",
+                    messages=[
+                        {
+                            "content": PROMPT.format(pdf_stream),
+                            "role": "user",
+                        }
+                    ],
+                    stream=False,
+                )
                 break
             except Exception as e:
                 time.sleep(0.5 * i)
                 if i == 3:
                     raise e
     content = res.choices[0].message.content
-    content = re.search(r'\{.*\}', content, flags=re.DOTALL).group(0)
-    return content    
-    
+    content = re.search(r"\{.*\}", content, flags=re.DOTALL).group(0)
+    return content
+
+
 # Main function to be called
 def main(context):
     file_id = context.req.query.get("file_id")
-    pdf_bytes = storage.get_file_download(BUCKET_ID,file_id)
+    pdf_bytes = storage.get_file_download(BUCKET_ID, file_id)
     text = extract_text_from_pdf(pdf_bytes)
     result = process_pdf_text(text)
     result_json = json.loads(result)

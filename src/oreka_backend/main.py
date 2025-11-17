@@ -1,7 +1,7 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from upload import FileProcessor
+from oreka_backend.upload import FileProcessor
 
 app = FastAPI(title="Oreka Backend", version="1.0.0")
 

@@ -1,0 +1,26 @@
+[project]
+name = "oreka-backend"
+version = "0.1.0"
+description = "oreka server backend"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "appwrite>=13.6.1",
+    "fastapi>=0.121.2",
+    "mistralai>=1.9.11",
+    "pandas>=2.3.3",
+    "pydantic>=2.12.4",
+    "pymupdf>=1.26.6",
+    "pypdf>=6.3.0",
+    "uvicorn>=0.38.0",
+]
+
+[build-system]
+requires = ["uv_build >= 0.9.8, <0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "fastapi-cli>=0.0.16",
+    "ruff>=0.14.5",
+]

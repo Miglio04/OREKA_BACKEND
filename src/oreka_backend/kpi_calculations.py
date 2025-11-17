@@ -1,11 +1,8 @@
 from collections import defaultdict
-from decimal import Decimal, ROUND_HALF_UP
-from typing import Optional, Dict
-try:
-    from .models import POSLine, SalesInvoice, PurchaseInvoice
-except ImportError:
-    # Fallback for direct execution
-    from models import POSLine, SalesInvoice, PurchaseInvoice
+from decimal import ROUND_HALF_UP, Decimal
+from typing import Dict, Optional
+
+from models import POSLine, PurchaseInvoice, SalesInvoice
 
 Q2 = Decimal("0.01")
 Q4 = Decimal("0.0001")
@@ -31,20 +28,20 @@ def kpi_pos_only(
 
     has_prices = bool(price_list)
 
-    for l in pos:
-        tp: Decimal = Decimal(str(l.total_price))
+    for line in pos:
+        tp: Decimal = Decimal(str(line.total_price))
         rev_total += tp
-        by_area[l.area] += tp
-        by_payment[l.payment_method] += tp
-        receipts.add(l.receipt_id)
+        by_area[line.area] += tp
+        by_payment[line.payment_method] += tp
+        receipts.add(line.receipt_id)
 
         if has_prices:
-            theo = price_list.get(l.item_name)  # Decimal or None
+            theo = price_list.get(line.item_name)
             if theo is not None:
-                actual = tp / Decimal(l.quantity)  # quantity >= 1
+                actual = tp / Decimal(line.quantity)
                 if theo > actual:
-                    discount_numer += (theo - actual) * Decimal(l.quantity)
-                discount_denom += theo * Decimal(l.quantity)
+                    discount_numer += (theo - actual) * Decimal(line.quantity)
+                discount_denom += theo * Decimal(line.quantity)
 
     avg_receipt = rev_total / Decimal(max(len(receipts), 1))
     discount_rate = discount_numer / discount_denom if discount_denom > 0 else None
