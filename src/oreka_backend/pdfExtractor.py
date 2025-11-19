@@ -77,7 +77,7 @@ class PDFExtractor:
             for i in range(4):
                 try:
                     res = mistral.chat.complete(
-                        model="mistral-small-latest",
+                        model="mistral-large-latest",
                         messages=[
                             {
                                 "content": self.PROMPT.format(pdf_stream),
@@ -88,7 +88,10 @@ class PDFExtractor:
                     )
                     break
                 except Exception as e:
-                    time.sleep(0.5 * i)
+                    if "capacity" in str(e).lower():
+                        time.sleep(2 * (i + 1))  # exponential backoff
+                    else:
+                        raise
                     if i == 3:
                         raise e
         content = res.choices[0].message.content
